@@ -27,10 +27,7 @@
   "license": "MIT",
   "homepage": "https://main--cosmic-twilight-9ba781.netlify.app",
   "devDependencies": {
-    "@rollup/plugin-alias": "^5.0.0",
-    "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-replace": "^5.0.2",
-    "@types/node": "^18.15.12",
     "@typescript-eslint/eslint-plugin": "^5.59.0",
     "@typescript-eslint/parser": "^5.59.0",
     "eslint": "^8.38.0",
