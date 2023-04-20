@@ -6,10 +6,9 @@ export default {
   parent: 'game',
   backgroundColor: '#33A5E7',
   scale: {
-    width: 800,
-    height: 600,
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
+    // has to be aspect ratio of 2:1
+    width: 1000,
+    height: 500,
   },
   physics: {
     default: 'arcade',
