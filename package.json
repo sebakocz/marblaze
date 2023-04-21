@@ -8,7 +8,7 @@
     "build": "vite build",
     "serve": "vite preview",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix"
+    "lint:fix": "npm run lint -- --fix"
   },
   "repository": {
     "type": "git",
