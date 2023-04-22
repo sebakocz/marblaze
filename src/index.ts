@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
 import config from './config';
-import PrettyBallScene from './scenes/prettyBallScene';
+import MainScene from './scenes/mainScene';
 
 new Phaser.Game(
   Object.assign(config, {
-    scene: [PrettyBallScene],
+    scene: [MainScene],
   })
 );
