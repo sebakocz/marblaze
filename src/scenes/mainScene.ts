@@ -1,25 +1,116 @@
 import Phaser from 'phaser';
+import { generateHills } from '@src/map/generateHills';
+import Vector2 = Phaser.Math.Vector2;
+
+const BALL_COLOR = 0x1f4f8b;
+const GROUND_COLOR = 0x228b22;
+
+interface Hill {
+  x: number;
+  y: number;
+}
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super({ key: 'MainScene' });
   }
 
-  preload() {
-    this.load.image('ball', 'assets/ball.png');
+  create() {
+    const category = this.matter.world.nextCategory();
+    const graphics = this.add.graphics();
+    const hills = generateHills(
+      this.game.config.width as number,
+      this.game.config.height as number
+    );
+    const curve = this.createGroundCurve(hills);
+
+    graphics.fillStyle(GROUND_COLOR);
+    this.createGroundPolygons(hills, category);
+    this.drawAndFillGroundCurve(graphics, curve);
+    this.createBall();
   }
 
-  create() {
-    // Set up physics and enable gravity in the y-axis
-    this.physics.world.gravity.y = 300;
+  createGroundCurve(hills: Hill[]) {
+    const curvePoints = hills.flatMap((hill) => [hill.x, hill.y]);
+    return new Phaser.Curves.Spline(curvePoints);
+  }
 
-    const ball = this.physics.add.image(400, 300, 'ball');
+  createGroundPolygons(hills: Hill[], category: number) {
+    const sides = 4;
+    const size = 10;
+    const distance = size / 2;
+    const stiffness = 0.1;
+    const options = {
+      friction: 0,
+      frictionAir: 0,
+      restitution: 0,
+      ignoreGravity: true,
+      inertia: Infinity,
+      isStatic: true,
+      angle: 0,
+      collisionFilter: { category },
+    };
 
-    // Set the scale of the ball to make it smaller
-    ball.setScale(0.2);
+    const segments = 128;
+    const curve = this.createGroundCurve(hills);
+    const points = curve.getPoints(segments);
 
-    ball.setCollideWorldBounds(true);
-    ball.setBounce(1, 1);
-    ball.setVelocity(Phaser.Math.Between(-200, 200), 20);
+    for (let i = 0; i < points.length - 1; i++) {
+      const startPoint = points[i];
+      const endPoint = points[i + 1];
+
+      options.angle = Phaser.Math.Angle.Between(
+        startPoint.x,
+        startPoint.y,
+        endPoint.x,
+        endPoint.y
+      );
+
+      const previous = this.matter.add.polygon(
+        startPoint.x,
+        startPoint.y,
+        sides,
+        size,
+        options
+      );
+
+      const current = this.matter.add.polygon(
+        endPoint.x,
+        endPoint.y,
+        sides,
+        size,
+        options
+      );
+
+      this.matter.add.constraint(previous, current, distance, stiffness);
+    }
+  }
+
+  drawAndFillGroundCurve(
+    graphics: Phaser.GameObjects.Graphics,
+    curve: Phaser.Curves.Spline
+  ) {
+    const segments = 128;
+    graphics.lineStyle(15, GROUND_COLOR, 1);
+    curve.draw(graphics, segments);
+    const points = curve.getPoints(segments);
+
+    // Add points to close the polygon at the bottom of the screen
+    const screenHeight = this.game.config.height as number;
+    const screenWidth = this.game.config.width as number;
+    points.push(new Vector2(screenWidth, screenHeight));
+    points.push(new Vector2(0, screenHeight));
+
+    // Fill the closed polygon
+    graphics.fillPoints(points, true);
+  }
+
+  createBall() {
+    const ball = this.add.circle(100, 0, 50, BALL_COLOR);
+    this.matter.add.gameObject(ball, {
+      shape: 'circle',
+      radius: 50,
+      restitution: 0.1,
+    });
   }
 }
