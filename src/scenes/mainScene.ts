@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { generateHills } from '@src/map/generateHills';
+import Vector2 = Phaser.Math.Vector2;
 
 const BALL_COLOR = 0x1f4f8b;
 const GROUND_COLOR = 0x228b22;
@@ -50,7 +51,7 @@ export default class MainScene extends Phaser.Scene {
       collisionFilter: { category },
     };
 
-    const segments = 256;
+    const segments = 128;
     const curve = this.createGroundCurve(hills);
     const points = curve.getPoints(segments);
 
@@ -89,20 +90,19 @@ export default class MainScene extends Phaser.Scene {
     graphics: Phaser.GameObjects.Graphics,
     curve: Phaser.Curves.Spline
   ) {
-    const segments = 256;
+    const segments = 128;
     graphics.lineStyle(15, GROUND_COLOR, 1);
     curve.draw(graphics, segments);
+    const points = curve.getPoints(segments);
 
-    curve.points.push(
-      new Phaser.Math.Vector2(
-        this.game.config.width as number,
-        this.game.config.height as number
-      )
-    );
-    curve.points.push(
-      new Phaser.Math.Vector2(0, this.game.config.height as number)
-    );
-    graphics.fillPoints(curve.getPoints(segments), true);
+    // Add points to close the polygon at the bottom of the screen
+    const screenHeight = this.game.config.height as number;
+    const screenWidth = this.game.config.width as number;
+    points.push(new Vector2(screenWidth, screenHeight));
+    points.push(new Vector2(0, screenHeight));
+
+    // Fill the closed polygon
+    graphics.fillPoints(points, true);
   }
 
   createBall() {
