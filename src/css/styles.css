@@ -52,7 +52,47 @@ canvas {
 
 button {
   aspect-ratio: 1;
-  background-color: var(--action-color);
+  background: radial-gradient(
+    circle at 32px 32px,
+    var(--action-color),
+    #4f1010
+  );
+  border: none;
   border-radius: 50%;
+  cursor: pointer;
   height: 96px;
+  position: relative;
+}
+
+button::after {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 255, 255, 0.8),
+    rgba(255, 255, 255, 0.8) 14%,
+    rgba(255, 255, 255, 0) 24%
+  );
+  border-radius: 50%;
+  content: '';
+  filter: blur(8px);
+  height: 100%;
+  left: -20px;
+  pointer-events: none;
+  position: absolute;
+  top: -20px;
+  transform: skewX(-20deg);
+  width: 100%;
+}
+
+button:active {
+  background: radial-gradient(
+    circle at 35px 35px,
+    var(--action-color),
+    #210707
+  );
+}
+
+button:active::after {
+  left: -17px;
+  opacity: 0.7;
+  top: -17px;
 }
