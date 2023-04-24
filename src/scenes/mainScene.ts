@@ -1,7 +1,13 @@
 import Phaser from 'phaser';
+import { generateHills } from '@src/map/generateHills';
 
 const BALL_COLOR = 0x1f4f8b;
 const GROUND_COLOR = 0x228b22;
+
+interface Hill {
+  x: number;
+  y: number;
+}
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -9,29 +15,26 @@ export default class MainScene extends Phaser.Scene {
   }
 
   create() {
-    const lineCategory = this.matter.world.nextCategory();
+    const category = this.matter.world.nextCategory();
     const graphics = this.add.graphics();
-    const hills = this.generateHills(
+    const hills = generateHills(
       this.game.config.width as number,
       this.game.config.height as number
     );
     const curve = this.createGroundCurve(hills);
 
     graphics.fillStyle(GROUND_COLOR);
-    this.createGroundPolygons(hills, lineCategory);
+    this.createGroundPolygons(hills, category);
     this.drawAndFillGroundCurve(graphics, curve);
     this.createBall();
   }
 
-  createGroundCurve(hills: { x: number; y: number }[]) {
+  createGroundCurve(hills: Hill[]) {
     const curvePoints = hills.flatMap((hill) => [hill.x, hill.y]);
     return new Phaser.Curves.Spline(curvePoints);
   }
 
-  createGroundPolygons(
-    hills: { x: number; y: number }[],
-    lineCategory: number
-  ) {
+  createGroundPolygons(hills: Hill[], category: number) {
     const sides = 4;
     const size = 10;
     const distance = size / 2;
@@ -44,7 +47,7 @@ export default class MainScene extends Phaser.Scene {
       inertia: Infinity,
       isStatic: true,
       angle: 0,
-      collisionFilter: { category: lineCategory },
+      collisionFilter: { category },
     };
 
     const segments = 256;
@@ -69,6 +72,7 @@ export default class MainScene extends Phaser.Scene {
         size,
         options
       );
+
       const current = this.matter.add.polygon(
         endPoint.x,
         endPoint.y,
@@ -108,24 +112,5 @@ export default class MainScene extends Phaser.Scene {
       radius: 50,
       restitution: 0.1,
     });
-  }
-
-  generateHills(width: number, height: number) {
-    const hills = [];
-    const hillCount = 10;
-    const hillHeight = height / 2;
-    const randomFactor = 0.3;
-
-    for (let i = 0; i < hillCount; i++) {
-      const x = (width / (hillCount - 1)) * i;
-      const y =
-        hillHeight +
-        (Math.sin((Math.PI / (hillCount - 1)) * i) * hillHeight) / 2 +
-        Math.random() * hillHeight * randomFactor -
-        (hillHeight * randomFactor) / 2;
-      hills.push(new Phaser.Math.Vector2(x, y));
-    }
-
-    return hills;
   }
 }
