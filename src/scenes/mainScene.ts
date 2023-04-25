@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { generateHills } from '@src/map/generateHills';
 import Vector2 = Phaser.Math.Vector2;
+import GameObject = Phaser.GameObjects.GameObject;
 
 const BALL_COLOR = 0x1f4f8b;
 const GROUND_COLOR = 0x228b22;
@@ -11,8 +12,15 @@ interface Hill {
 }
 
 export default class MainScene extends Phaser.Scene {
+  goal?: GameObject;
+  ball?: GameObject;
+
   constructor() {
     super({ key: 'MainScene' });
+  }
+
+  preload() {
+    this.load.image('goal', 'assets/goalflag.png');
   }
 
   create() {
@@ -27,7 +35,53 @@ export default class MainScene extends Phaser.Scene {
     graphics.fillStyle(GROUND_COLOR);
     this.createGroundPolygons(hills, category);
     this.drawAndFillGroundCurve(graphics, curve);
+
     this.createBall();
+    this.createGoal();
+  }
+
+  createGoal() {
+    const goal = this.add.sprite(850, 50, 'goal');
+    const shape = {
+      type: 'rectangle',
+      x: 500,
+      y: 50,
+      width: 100,
+      height: 500,
+    };
+
+    this.matter.add.gameObject(goal, {
+      shape,
+    });
+    goal.setOrigin(0.2, 0.5);
+    goal.setData('type', 'goal');
+    goal.setScale(0.2);
+
+    this.matter.world.on('collisionstart', (event: any) => {
+      const pairs = event.pairs;
+      for (let i = 0; i < pairs.length; i++) {
+        const pair = pairs[i];
+        // if the goal collides with ball, end the game
+        if (
+          (pair.bodyA === this.ball?.body && pair.bodyB === this.goal?.body) ||
+          (pair.bodyA === this.goal?.body && pair.bodyB === this.ball?.body)
+        ) {
+          this.endGame();
+          break;
+        }
+        if (pair.bodyA === this.goal?.body || pair.bodyB === this.goal?.body) {
+          this.goal.body.isStatic = true;
+          break;
+        }
+      }
+    });
+
+    this.goal = goal;
+  }
+
+  endGame() {
+    console.log('Goal reached!');
+    this.scene.restart();
   }
 
   createGroundCurve(hills: Hill[]) {
@@ -112,5 +166,6 @@ export default class MainScene extends Phaser.Scene {
       radius: 50,
       restitution: 0.1,
     });
+    this.ball = ball;
   }
 }
