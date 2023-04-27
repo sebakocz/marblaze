@@ -52,16 +52,13 @@ canvas {
 
 button {
   aspect-ratio: 1;
-  background: radial-gradient(
-    circle at 32px 32px,
-    var(--action-color),
-    #4f1010
-  );
+  background: radial-gradient(circle at 33% 33%, var(--action-color), #4f1010);
   border: none;
   border-radius: 50%;
   cursor: pointer;
   height: 96px;
   position: relative;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button::after {
@@ -72,7 +69,7 @@ button::after {
     rgba(255, 255, 255, 0) 24%
   );
   border-radius: 50%;
-  content: '';
+  content: "";
   filter: blur(8px);
   height: 100%;
   left: -20px;
@@ -95,4 +92,62 @@ button:active::after {
   left: -17px;
   opacity: 0.7;
   top: -17px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none; /* Hides the slider so that custom slider can be made */
+  width: 100%; /* Specific width is required for Firefox. */
+  background: transparent; /* Otherwise white in Chrome */
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-ms-track {
+  width: 100%;
+  cursor: pointer;
+
+  /* Hides the slider so custom styles can be added */
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 24px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid black;
+  cursor: pointer;
+
+  background: radial-gradient(circle at 33% 33%, white, #707070);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 24px;
+  height: unset;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid black;
+  cursor: pointer;
+
+  background: radial-gradient(circle at 33% 33%, white, #707070);
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 24px;
+  cursor: pointer;
+  background: #5588c7;
+  border-radius: 999px;
+}
+
+input[type="range"]::-moz-range-track {
+  width: 100%;
+  height: 25px;
+  cursor: pointer;
+  background: #5588c7;
+  border-radius: 999px;
 }
