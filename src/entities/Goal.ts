@@ -1,6 +1,8 @@
 import Phaser from 'phaser';
 
 export default class Goal extends Phaser.GameObjects.Sprite {
+  element?: Phaser.Physics.Matter.Sprite;
+
   constructor(scene: Phaser.Scene) {
     super(scene, 850, 50, 'goal');
     scene.add.existing(this);
@@ -13,7 +15,9 @@ export default class Goal extends Phaser.GameObjects.Sprite {
       height: 500,
     };
 
-    scene.matter.add.gameObject(this, { shape });
+    this.element = scene.matter.add.gameObject(this, {
+      shape,
+    }) as Phaser.Physics.Matter.Sprite;
     this.setOrigin(0.2, 0.5);
     this.setData('type', 'goal');
     this.setScale(0.2);

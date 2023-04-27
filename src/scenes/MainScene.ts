@@ -3,10 +3,11 @@ import { generateHills } from '@src/map/generateHills';
 import Ball from '@src/entities/Ball';
 import Goal from '@src/entities/Goal';
 import Ground from '@src/entities/Ground';
+import { BodyType } from 'matter';
 
 export default class MainScene extends Phaser.Scene {
-  goal?: Goal;
-  ball?: Ball;
+  goal?: Phaser.Physics.Matter.Sprite;
+  ball?: Phaser.Physics.Matter.Sprite;
   ground?: Ground;
 
   constructor() {
@@ -24,21 +25,17 @@ export default class MainScene extends Phaser.Scene {
     );
 
     this.ground = new Ground(this, hills);
-    this.ball = new Ball(this);
-    this.goal = new Goal(this);
+    this.ball = new Ball(this).element;
+    this.goal = new Goal(this).element;
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.ball.setOnCollideWith(this.goal, () => {
+    const goalBody = this.goal?.body as BodyType;
+
+    this.ball?.setOnCollideWith(goalBody, () => {
       this.endGame();
     });
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    this.goal.setOnCollideWith(this.matter.world.getAllBodies(), () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      this.goal.body.isStatic = true;
+    this.goal?.setOnCollideWith(this.matter.world.getAllBodies(), () => {
+      goalBody.isStatic = true;
     });
   }
 
