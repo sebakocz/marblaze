@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 
 export default class Goal extends Phaser.GameObjects.Sprite {
-  element?: Phaser.Physics.Matter.Sprite;
+  element: Phaser.Physics.Matter.Sprite;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 850, 50, 'goal');

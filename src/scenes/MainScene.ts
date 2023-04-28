@@ -3,7 +3,6 @@ import { generateHills } from '@src/map/generateHills';
 import Ball from '@src/entities/Ball';
 import Goal from '@src/entities/Goal';
 import Ground from '@src/entities/Ground';
-import { BodyType } from 'matter';
 
 export default class MainScene extends Phaser.Scene {
   goal?: Phaser.Physics.Matter.Sprite;
@@ -28,14 +27,12 @@ export default class MainScene extends Phaser.Scene {
     this.ball = new Ball(this).element;
     this.goal = new Goal(this).element;
 
-    const goalBody = this.goal?.body as BodyType;
-
-    this.ball?.setOnCollideWith(goalBody, () => {
+    this.ball.setOnCollideWith(this.goal, () => {
       this.endGame();
     });
 
-    this.goal?.setOnCollideWith(this.matter.world.getAllBodies(), () => {
-      goalBody.isStatic = true;
+    this.goal.setOnCollideWith(this.matter.world.getAllBodies(), () => {
+      this.goal?.setStatic(true);
     });
   }
 
