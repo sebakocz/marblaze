@@ -4,6 +4,8 @@ import Ball from '@src/entities/Ball';
 import Goal from '@src/entities/Goal';
 import Ground from '@src/entities/Ground';
 
+const restartButton = document.getElementById('button-start');
+
 export default class MainScene extends Phaser.Scene {
   goal?: Phaser.Physics.Matter.Sprite;
   ball?: Phaser.Physics.Matter.Sprite;
@@ -34,9 +36,17 @@ export default class MainScene extends Phaser.Scene {
     this.goal.setOnCollideWith(this.matter.world.getAllBodies(), () => {
       this.goal?.setStatic(true);
     });
+
+    restartButton?.addEventListener('click', this.endGame);
   }
 
-  endGame() {
+  endGame = () => {
+    restartButton?.removeEventListener('click', this.endGame);
+
+    // Matter.js bugs out after several restarts
+    // https://phaser.discourse.group/t/restart-scene-6x-times-with-matter-js-provoke-bug/5302/3
+    this.matter.world.resetCollisionIDs();
+
     this.scene.restart();
-  }
+  };
 }
