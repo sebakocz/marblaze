@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
-import { generateHills } from '@src/map/generateHills';
-import Ball from '@src/entities/Ball';
-import Goal from '@src/entities/Goal';
-import Ground from '@src/entities/Ground';
+import { generateHills } from '@src/entities/Ground/generateHills';
+import Ball from '@src/entities/Ball/Ball';
+import Goal from '@src/entities/Goal/Goal';
+import Ground from '@src/entities/Ground/Ground';
 
 const restartButton = document.getElementById('button-start');
 

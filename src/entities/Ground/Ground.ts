@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import Vector2 = Phaser.Math.Vector2;
-import { Hill } from '@src/map/generateHills';
+import { Hill } from '@src/entities/Ground/generateHills';
 
 const GROUND_COLOR = 0x228b22;
 
