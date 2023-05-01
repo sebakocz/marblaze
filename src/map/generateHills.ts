@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
 
+export interface Hill {
+  x: number;
+  y: number;
+}
+
 export const generateHills = (width: number, height: number) => {
   const hillCount = 10;
   const hillHeight = height / 2;
